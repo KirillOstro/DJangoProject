@@ -12,9 +12,19 @@ from django.utils import timezone
 from smtplib import SMTPException
 
 
+@login_required
 def queue_list(request):
     queues = Queue.objects.all()
-    return render(request, 'queue_app/queue_list.html', {'queues': queues})
+    queue_data = []
+    for queue in queues:
+        total_slots = queue.slot_set.count()  # Общее количество слотов
+        available_slots = queue.slot_set.filter(is_available=True).count()  # Доступные слоты
+        queue_data.append({
+            'queue': queue,
+            'total_slots': total_slots,
+            'available_slots': available_slots
+        })
+    return render(request, 'queue_app/queue_list.html', {'queues': queue_data})
 
 
 @login_required
@@ -141,10 +151,12 @@ def call_next_user(request, queue_name, start_time):
                 return HttpResponse(
                     f'<pre style="font-size: 20">Mail Sending Failed!\n{str(e)}</pre>'
                 )
+            # Stub (temp)
+            finally:
+                # Помечаем, что уведомление отправлено
+                next_booking.notified = True
+                next_booking.save()
 
-            # Помечаем, что уведомление отправлено
-            next_booking.notified = True
-            next_booking.save()
             messages.success(request, f"Пользователь {next_booking.user.username} был успешно вызван.")
         else:
             messages.info(request, "В очереди нет ожидающих пользователей.")
