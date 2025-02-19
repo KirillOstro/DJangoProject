@@ -14,19 +14,20 @@
 
     <!-- Список очередей -->
     <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% for queue in queues %}
+        {% for item in queues %}
             <div class="col mb-4">
                 <div class="card shadow-lg border-light rounded">
                     <div class="card-body">
-                        <h5 class="card-title text-success">{{ queue.name }}</h5>
-                        
-                        <!-- Доступные слоты -->
+                        <h5 class="card-title text-success">{{ item.queue.name }}</h5>
+        
+                        <!-- Доступные и общие слоты -->
                         <p class="card-text">
-                            <strong>Доступно слотов:</strong> <span class="text-dark fw-bold">{{ queue.slot_set.count }}</span>
+                            <strong>Доступно слотов:</strong> 
+                            <span class="text-dark fw-bold">{{ item.available_slots }}</span> / <span class="text-dark fw-bold">{{ item.total_slots }}</span>
                         </p>
-
+        
                         <!-- Кнопка перехода -->
-                        <a href="{% url 'slot_list' queue.id %}" class="btn btn-outline-primary mt-3 w-100">Перейти к слотам</a>
+                        <a href="{% url 'slot_list' item.queue.id %}" class="btn btn-outline-primary mt-3 w-100">Перейти к слотам</a>
                     </div>
                 </div>
             </div>

@@ -12,9 +12,19 @@ from django.utils import timezone
 from smtplib import SMTPException
 
 
+@login_required
 def queue_list(request):
     queues = Queue.objects.all()
-    return render(request, 'queue_app/queue_list.html', {'queues': queues})
+    queue_data = []
+    for queue in queues:
+        total_slots = queue.slot_set.count()  # Общее количество слотов
+        available_slots = queue.slot_set.filter(is_available=True).count()  # Доступные слоты
+        queue_data.append({
+            'queue': queue,
+            'total_slots': total_slots,
+            'available_slots': available_slots
+        })
+    return render(request, 'queue_app/queue_list.html', {'queues': queue_data})
 
 
 @login_required
