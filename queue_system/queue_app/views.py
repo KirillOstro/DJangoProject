@@ -12,9 +12,6 @@ from django.utils import timezone
 from smtplib import SMTPException
 
 
-# def queue_list(request):
-#     queues = Queue.objects.all()
-#     return render(request, 'queue_app/queue_list.html', {'queues': queues})
 @login_required
 def queue_list(request):
     queues = Queue.objects.all()
